@@ -5,7 +5,7 @@ pub struct Pixel {
 }
 
 impl Pixel {
-    pub fn bytes(&self) -> [u8; 3] {
+    fn bytes(&self) -> [u8; 3] {
         [self.r, self.g, self.b]
     }
 }
