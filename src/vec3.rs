@@ -26,7 +26,7 @@ impl Vec3 {
         return Vec3 { x: x, y: y, z: z };
     }
 
-    pub fn div(&mut self, t: f64) -> Vec3 {
+    pub fn div(&self, t: f64) -> Vec3 {
         let vec3 = self.mul(1.0 / t);
         return vec3;
     }

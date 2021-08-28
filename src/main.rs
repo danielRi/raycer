@@ -46,5 +46,19 @@ mod tests {
         assert_eq!(vec3.x, 2.0);
         assert_eq!(vec3.y, 1.6);
         assert_eq!(vec3.z, 1.2);
+
+        vec3 = vec3.div(2.0);
+
+        assert_eq!(vec3.x, 1.0);
+        assert_eq!(vec3.y, 0.8);
+        assert_eq!(vec3.z, 0.6);
+
+        let length_squared = vec3.length_squared();
+
+        assert_eq!(length_squared, 2.0);
+
+        let length = vec3.length();
+
+        assert_eq!(length, 1.4142135623730951);
     }
 }

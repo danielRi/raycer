@@ -43,11 +43,12 @@ impl Image {
             Ok(file) => file,
             Err(e) => return Err(e),
         };
-
+        let bar = ProgressBar::new((self.width * self.height).into());
         write!(file, "P3\n{} {}\n255\n", self.width, self.height)?;
         for row in self.pixels.iter() {
             for pixel in row.iter() {
                 write!(file, "{} {} {} ", pixel.r, pixel.g, pixel.b)?;
+                bar.inc(1);
             }
             write!(file, "\n")?;
         }
