@@ -7,8 +7,6 @@ mod pixel;
 mod vec3;
 
 fn main() -> std::io::Result<()> {
-    println!("Hello, world!");
-
     let cli = cli::Cli::from_args();
 
     let create_image_progress_bar = ProgressBar::new((cli.width * cli.height).into());
