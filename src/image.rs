@@ -1,5 +1,4 @@
 use super::pixel::Pixel;
-use indicatif::ProgressBar;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::Result;
@@ -12,11 +11,17 @@ pub struct Image {
 
 impl Image {
     // Factory constructor
-    pub fn create(width: u32, height: u32, red: u8, green: u8, blue: u8) -> Self {
+    pub fn create(
+        width: u32,
+        height: u32,
+        red: u8,
+        green: u8,
+        blue: u8,
+        update_progress: &dyn Fn(u64),
+    ) -> Self {
         assert!(width > 0);
         assert!(height > 0);
         let mut rows: Vec<Vec<Pixel>> = Vec::new();
-        let bar = ProgressBar::new((width * height).into());
 
         while rows.len() < height as usize {
             let mut row = Vec::new();
@@ -26,7 +31,7 @@ impl Image {
                     g: green,
                     b: blue,
                 });
-                bar.inc(1);
+                update_progress(1);
             }
             rows.push(row);
         }
@@ -37,18 +42,18 @@ impl Image {
         }
     }
 
-    pub fn write_to_file(&self, path: String) -> Result<()> {
+    pub fn write_to_file(&self, path: String, update_progress: &dyn Fn(u64)) -> Result<()> {
         let file = File::create(path);
         let mut file = match file {
             Ok(file) => file,
             Err(e) => return Err(e),
         };
-        let bar = ProgressBar::new((self.width * self.height).into());
+
         write!(file, "P3\n{} {}\n255\n", self.width, self.height)?;
         for row in self.pixels.iter() {
             for pixel in row.iter() {
                 write!(file, "{} {} {} ", pixel.r, pixel.g, pixel.b)?;
-                bar.inc(1);
+                update_progress(1);
             }
             write!(file, "\n")?;
         }

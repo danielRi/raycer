@@ -1,3 +1,4 @@
+use indicatif::ProgressBar;
 use structopt::StructOpt;
 
 mod cli;
@@ -10,8 +11,21 @@ fn main() -> std::io::Result<()> {
 
     let cli = cli::Cli::from_args();
 
-    let my_image = image::Image::create(cli.width, cli.height, cli.red, cli.green, cli.blue);
-    match my_image.write_to_file(cli.output.into_os_string().into_string().unwrap()) {
+    let create_image_progress_bar = ProgressBar::new((cli.width * cli.height).into());
+    let write_file_progress_bar = ProgressBar::new((cli.width * cli.height).into());
+
+    let my_image = image::Image::create(
+        cli.width,
+        cli.height,
+        cli.red,
+        cli.green,
+        cli.blue,
+        &|progress| create_image_progress_bar.inc(progress),
+    );
+    match my_image.write_to_file(
+        cli.output.into_os_string().into_string().unwrap(),
+        &|progress| write_file_progress_bar.inc(progress),
+    ) {
         Err(e) => println!("{:?}", e),
         _ => (),
     }
