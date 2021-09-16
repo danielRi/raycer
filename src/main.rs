@@ -1,6 +1,8 @@
 use indicatif::ProgressBar;
 use structopt::StructOpt;
 
+use crate::pixel::Pixel;
+
 mod cli;
 mod image;
 mod pixel;
@@ -12,7 +14,7 @@ fn main() -> std::io::Result<()> {
     let create_image_progress_bar = ProgressBar::new((cli.width * cli.height).into());
     let write_file_progress_bar = ProgressBar::new((cli.width * cli.height).into());
 
-    let my_image = image::Image::create(
+    let mut my_image = image::Image::create(
         cli.width,
         cli.height,
         cli.red,
@@ -20,6 +22,13 @@ fn main() -> std::io::Result<()> {
         cli.blue,
         &|progress| create_image_progress_bar.inc(progress),
     );
+
+    for row_index in 0..100 {
+        my_image
+            .set_pixel(row_index, 100, Pixel { r: 0, g: 20, b: 0 })
+            .unwrap();
+    }
+
     match my_image.write_to_file(
         cli.output.into_os_string().into_string().unwrap(),
         &|progress| write_file_progress_bar.inc(progress),

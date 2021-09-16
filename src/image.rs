@@ -43,13 +43,13 @@ impl Image {
         }
     }
 
-    pub fn set_pixel(&self, x: u32, y: u32, pixel: Pixel) -> Result<(), String> {
+    pub fn set_pixel(&mut self, x: u32, y: u32, pixel: Pixel) -> Result<(), String> {
         if x > self.width || y > self.height {
             return Err(String::from("Invalid x or y coordinates"));
         }
 
         // TODO: set pixel of pixel arrays
-
+        self.pixels[x as usize][y as usize] = pixel;
         Ok(())
     }
 
