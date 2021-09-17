@@ -6,11 +6,14 @@ use crate::pixel::Pixel;
 mod cli;
 mod image;
 mod pixel;
-mod vec3;
+mod ray;
+pub mod vec3;
 
 fn main() -> std::io::Result<()> {
     let cli = cli::Cli::from_args();
 
+    // create empty white image
+    let aspect_ratio: f64 = cli.width as f64 / cli.height as f64;
     let create_image_progress_bar = ProgressBar::new((cli.width * cli.height).into());
     let write_file_progress_bar = ProgressBar::new((cli.width * cli.height).into());
 
@@ -23,12 +26,42 @@ fn main() -> std::io::Result<()> {
         &|progress| create_image_progress_bar.inc(progress),
     );
 
+    // camera
+    let viewport_height = 2.0;
+    let viewport_width = viewport_height * aspect_ratio;
+    let focal_length = 1.0; // distance between camera and "canvas"
+    let camera_origin = vec3::Vec3 {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+    };
+    let horizontal = vec3::Vec3 {
+        x: viewport_width,
+        y: 0.0,
+        z: 0.0,
+    };
+    let vertical = vec3::Vec3 {
+        x: 0.0,
+        y: viewport_height,
+        z: 0.0,
+    };
+    let lower_left_corner = camera_origin
+        .sub(horizontal.div(2.0))
+        .sub(vertical.div(2.0))
+        .sub(vec3::Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: focal_length,
+        });
+
+    // render
     for row_index in 0..100 {
         my_image
             .set_pixel(row_index, 100, Pixel { r: 0, g: 20, b: 0 })
             .unwrap();
     }
 
+    // output image to ppm file
     match my_image.write_to_file(
         cli.output.into_os_string().into_string().unwrap(),
         &|progress| write_file_progress_bar.inc(progress),

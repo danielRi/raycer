@@ -19,6 +19,14 @@ impl Vec3 {
         return Vec3 { x: x, y: y, z: z };
     }
 
+    pub fn sub(&self, vec: Vec3) -> Vec3 {
+        let x = self.x - vec.x;
+        let y = self.y - vec.y;
+
+        let z = self.z - vec.z;
+        return Vec3 { x: x, y: y, z: z };
+    }
+
     pub fn mul(&self, t: f64) -> Vec3 {
         let x = self.x * t;
         let y = self.y * t;
