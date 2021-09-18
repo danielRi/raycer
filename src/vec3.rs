@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,

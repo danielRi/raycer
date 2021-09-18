@@ -13,9 +13,11 @@ fn main() -> std::io::Result<()> {
     let cli = cli::Cli::from_args();
 
     // create empty white image
-    let aspect_ratio: f64 = cli.width as f64 / cli.height as f64;
-    let create_image_progress_bar = ProgressBar::new((cli.width * cli.height).into());
-    let write_file_progress_bar = ProgressBar::new((cli.width * cli.height).into());
+    let image_width: u64 = cli.width as u64;
+    let image_height: u64 = cli.height as u64;
+    let aspect_ratio: f64 = image_width as f64 / image_height as f64;
+    let create_image_progress_bar = ProgressBar::new(image_width * image_height);
+    let write_file_progress_bar = ProgressBar::new(image_width * image_height);
 
     let mut my_image = image::Image::create(
         cli.width,
@@ -55,10 +57,32 @@ fn main() -> std::io::Result<()> {
         });
 
     // render
-    for row_index in 0..100 {
+    /* for row_index in 0..100 {
         my_image
             .set_pixel(row_index, 100, Pixel { r: 0, g: 20, b: 0 })
             .unwrap();
+    } */
+
+    for j in (0..(image_height)).rev() {
+        for i in 0..(image_width) {
+            let u = i as f64 / (image_width as f64 - 1.0);
+            let v = j as f64 / (image_height as f64 - 1.0);
+            let direction = lower_left_corner
+                .add(horizontal.mul(u))
+                .add(vertical.mul(v))
+                .sub(camera_origin.clone());
+            // println!("direction: {:?}", direction);
+            let ray = ray::Ray {
+                origin: camera_origin.clone(),
+                direction: direction,
+            };
+            let pixel = ray.color_for_ray();
+            // println!("setting: {} {}", i, j);
+            match my_image.set_pixel(i as u32, j as u32, pixel) {
+                Err(error) => panic!("{}", error),
+                _ => (),
+            };
+        }
     }
 
     // output image to ppm file

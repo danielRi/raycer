@@ -44,12 +44,29 @@ impl Image {
     }
 
     pub fn set_pixel(&mut self, x: u32, y: u32, pixel: Pixel) -> Result<(), String> {
-        if x > self.width || y > self.height {
-            return Err(String::from("Invalid x or y coordinates"));
+        // println!(
+        //     "checking {} to {}, real length: {}",
+        //     x,
+        //     self.width,
+        //     self.pixels[y as usize].len()
+        // );
+        if x >= self.width {
+            let error = format!("Invalid x, x is {}, but width is {}", x, self.width);
+            return Err(error);
+        }
+        // println!(
+        //     "checking {} to {}, real length is {}",
+        //     y,
+        //     self.height,
+        //     self.pixels.len()
+        // );
+        if y >= self.height {
+            let error = format!("Invalid y, y is {}, but height is {}", y, self.height);
+            return Err(error);
         }
 
         // TODO: set pixel of pixel arrays
-        self.pixels[x as usize][y as usize] = pixel;
+        self.pixels[y as usize][x as usize] = pixel;
         Ok(())
     }
 
